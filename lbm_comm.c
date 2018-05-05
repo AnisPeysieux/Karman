@@ -223,14 +223,14 @@ void lbm_comm_sync_ghosts_horizontal( lbm_comm_t * mesh, Mesh *mesh_to_process, 
 		case COMM_SEND:
 			for( y = 0 ; y < mesh->height ; y++ )
             {
-				MPI_Send( Mesh_get_cell( mesh_to_process, x, y ), DIRECTIONS, MPI_DOUBLE, target_rank, 0, MPI_COMM_WORLD);
+				MPI_Send( &Mesh_get_col( mesh_to_process, x )[y*DIRECTIONS], DIRECTIONS, MPI_DOUBLE, target_rank, 0, MPI_COMM_WORLD);
             }
             //MPI_Send( Mesh_get_col( mesh_to_process, x ), DIRECTIONS*(mesh->height-2), MPI_DOUBLE, target_rank, 0, MPI_COMM_WORLD);
 			break;
 		case COMM_RECV:
 			for( y = 0 ; y < mesh->height ; y++ )
             {
-				MPI_Recv(  Mesh_get_cell( mesh_to_process, x , y), DIRECTIONS, MPI_DOUBLE, target_rank, 0, MPI_COMM_WORLD,&status);
+				MPI_Recv(  &Mesh_get_col( mesh_to_process, x )[y*DIRECTIONS], DIRECTIONS, MPI_DOUBLE, target_rank, 0, MPI_COMM_WORLD,&status);
             }
             //MPI_Recv(  Mesh_get_col( mesh_to_process, x ), DIRECTIONS*(mesh->height-2), MPI_DOUBLE, target_rank, 0, MPI_COMM_WORLD,&status);
 			break;
