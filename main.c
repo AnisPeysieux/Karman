@@ -62,7 +62,7 @@ FILE * open_output_file(lbm_comm_t * mesh_comm)
 
 void close_file(FILE* fp){
 	//wait all before closing
-	//MPI_Barrier(MPI_COMM_WORLD);
+	MPI_Barrier(MPI_COMM_WORLD);
 	//close file
 	fclose(fp);
 }
@@ -169,7 +169,7 @@ int main(int argc, char * argv[])
         save_frame_all_domain(fp, &mesh, &temp_render );
 
 	//barrier to wait all before start
-	//MPI_Barrier(MPI_COMM_WORLD);
+	MPI_Barrier(MPI_COMM_WORLD);
 
 	//time steps
 	for ( i = 1 ; i < ITERATIONS ; i++ )
@@ -182,13 +182,13 @@ int main(int argc, char * argv[])
 		special_cells( &mesh, &mesh_type, &mesh_comm);
 
 		//need to wait all before doing next step
-		//MPI_Barrier(MPI_COMM_WORLD);
+		MPI_Barrier(MPI_COMM_WORLD);
 
 		//compute collision term
 		collision( &temp, &mesh);
 
 		//need to wait all before doing next step
-		//MPI_Barrier(MPI_COMM_WORLD);
+		MPI_Barrier(MPI_COMM_WORLD);
 
 		//propagate values from node to neighboors
 
@@ -197,17 +197,17 @@ int main(int argc, char * argv[])
 		propagation( &mesh, &temp);
 
 		//need to wait all before doing next step
-		//MPI_Barrier(MPI_COMM_WORLD);
+		MPI_Barrier(MPI_COMM_WORLD);
 
 		//save step
 		if ( i % WRITE_STEP_INTERVAL == 0 && lbm_gbl_config.output_filename != NULL )
 			//save_frame_all_domain2(fp, &mesh);
             save_frame_all_domain(fp, &mesh, &temp_render );
 	}
-	/*if(rank != RANK_MASTER)
+	if(rank != RANK_MASTER)
     {
         MPI_Barrier(MPI_COMM_WORLD);
-    }*/
+    }
 	if( rank == RANK_MASTER && fp != NULL)
 	{
 		close_file(fp);
