@@ -1,5 +1,6 @@
 /********************  HEADERS  *********************/
 #include <mpi.h>
+#include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -173,6 +174,11 @@ int main(int argc, char * argv[])
 
 	//barrier to wait all before start
 	//MPI_Barrier(MPI_COMM_WORLD);
+
+/*#pragma omp parallel
+{
+    printf("thread: [%d / %d] processus [%d / %d]\n", omp_get_thread_num(), omp_get_num_threads(), rank, comm_size); fflush(stdout);
+}*/
 
 	//time steps
 	for ( i = 1 ; i < ITERATIONS ; i++ )
