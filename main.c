@@ -130,6 +130,7 @@ int main(int argc, char * argv[])
 	int i, rank, comm_size;
 	FILE * fp = NULL;
 	const char * config_filename = NULL;
+    MPI_Request* ghost_exchange_request = NULL;
     
 	//init MPI and get current rank and commuincator size.
 	MPI_Init( &argc, &argv );
@@ -154,6 +155,8 @@ int main(int argc, char * argv[])
 	Mesh_init( &temp, lbm_comm_width( &mesh_comm ), lbm_comm_height( &mesh_comm ) );
 	Mesh_init( &temp_render, lbm_comm_width( &mesh_comm ), lbm_comm_height( &mesh_comm ) );
 	lbm_mesh_type_t_init( &mesh_type, lbm_comm_width( &mesh_comm ), lbm_comm_height( &mesh_comm ));
+    ghost_exchange_request = malloc((2 + mesh.width * 2)*2*4);
+    assert(ghost_exchange_request != NULL);
 
 	//master open the output file
 	if( rank == RANK_MASTER )
@@ -192,7 +195,7 @@ int main(int argc, char * argv[])
 
 		//propagate values from node to neighboors
 
-		lbm_comm_ghost_exchange( &mesh_comm, &temp );
+		lbm_comm_ghost_exchange( &mesh_comm, &temp, ghost_exchange_request );
 
 		propagation( &mesh, &temp);
 
