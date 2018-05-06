@@ -282,7 +282,8 @@ void lbm_comm_sync_ghosts_vertical( lbm_comm_t * mesh, Mesh *mesh_to_process, lb
 {
 	//vars
 	MPI_Status status;
-	int x, k;
+	//int x, k;
+    int x;
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
@@ -294,19 +295,19 @@ void lbm_comm_sync_ghosts_vertical( lbm_comm_t * mesh, Mesh *mesh_to_process, lb
 	{
 		case COMM_SEND:
 			for ( x = 0 ; x < mesh_to_process->width ; x++)
-				for ( k = 0 ; k < DIRECTIONS ; k++)
+				/*for ( k = 0 ; k < DIRECTIONS ; k++)
                 {
-                    //printf("%d envoi vers %d x = %d/%d k = %d\n", rank, target_rank, x, mesh_to_process->width, k);
 					MPI_Send( &Mesh_get_cell(mesh_to_process, x, y)[k], 1, MPI_DOUBLE, target_rank, 0, MPI_COMM_WORLD);
-                }
+                }*/
+                MPI_Send( Mesh_get_cell(mesh_to_process, x, y), DIRECTIONS, MPI_DOUBLE, target_rank, 0, MPI_COMM_WORLD);
 			break;
 		case COMM_RECV:
 			for ( x = 0 ; x < mesh_to_process->width ; x++)
-				for ( k = 0 ; k < DIRECTIONS ; k++)
+				/*for ( k = 0 ; k < DIRECTIONS ; k++)
                 {
-                    //printf("%d recoit de %d x = %d/%d k = %d\n", rank, target_rank, x, mesh_to_process->width, k);
 					MPI_Recv( &Mesh_get_cell(mesh_to_process, x, y)[k], DIRECTIONS, MPI_DOUBLE, target_rank, 0, MPI_COMM_WORLD,&status);
-                }
+                }*/
+                MPI_Recv( Mesh_get_cell(mesh_to_process, x, y), DIRECTIONS, MPI_DOUBLE, target_rank, 0, MPI_COMM_WORLD,&status);
 			break;
 		default:
 			fatal("Unknown type of communication.");
